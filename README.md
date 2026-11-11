@@ -12,7 +12,7 @@
 [![Tests](https://img.shields.io/badge/tests-66_passing-2ea44f?style=flat-square)](#testing-and-evals)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-**Demo video:** _coming soon_ · **Live demo:** _coming soon_ · Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com)
+**Demo video:** _coming soon_ · **Live demo:** [paypal-post-purchase-agent.onrender.com](https://paypal-post-purchase-agent.onrender.com) · Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com)
 
 </div>
 
@@ -55,7 +55,10 @@ for one-click submission to PayPal.
 3. **Be the merchant:** open `/console` with the passcode, approve the held refund, then open a PayPal case and send
    the prepared evidence.
 
-The hosted URL and console passcode will be added here once deployed.
+Live: **https://paypal-post-purchase-agent.onrender.com** (free hosting: the first visit after a quiet spell takes
+about a minute to wake up). The console passcode is in the Devpost testing instructions. MCP endpoint for your AI
+agent: `https://paypal-post-purchase-agent.onrender.com/api/mcp` (Streamable HTTP), e.g.
+`claude mcp add --transport http juniper-pine https://paypal-post-purchase-agent.onrender.com/api/mcp`.
 
 ---
 
@@ -138,7 +141,7 @@ tool calls ([agent-toolkit #119](https://github.com/paypal/agent-toolkit/issues/
 | Eval run (11 scenarios, k=3) | ✅ 33/33 passed on free Gemini, 0 wrong money moves |
 | Push-to-talk voice | ⏳ Planned |
 | AG Studio insights dashboard | ⏳ Planned |
-| Hosted demo on Render | ⏳ Planned |
+| Hosted demo on Render (free plan) with Neon Postgres | ✅ Live; chat and MCP verified against the PayPal sandbox |
 
 ---
 
