@@ -5,6 +5,7 @@
  *   The script waits, captures each approved order, and writes customers / orders / shipments.
  * - Server-side card orders are not available on this sandbox account (spike S2), hence the buyer approval step.
  * - Idempotent: order numbers already in the DB are skipped. Shipping dates are simulated relative to today.
+ * - Hosted DB: `DATABASE_URL=<external url> SEED_RUN=render npm run seed` (fresh PayPal orders for that DB).
  */
 import { eq } from "drizzle-orm";
 import { createDb } from "../lib/db/client";
@@ -47,7 +48,9 @@ async function main() {
       continue;
     }
     const order = await paypal<PPOrder>("POST", "/v2/checkout/orders", {
-      requestId: `seed-${demo.number}`,
+      // Fixed id so a crashed run can resume the same orders. SEED_RUN gives a second database its own orders:
+      // PayPal refuses to replay a create for an order that is already captured.
+      requestId: `seed-${demo.number}${process.env.SEED_RUN ? `-${process.env.SEED_RUN}` : ""}`,
       body: {
         intent: "CAPTURE",
         purchase_units: [
