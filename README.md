@@ -135,9 +135,9 @@ tool calls ([agent-toolkit #119](https://github.com/paypal/agent-toolkit/issues/
 | MCP endpoint for buyer AI agents (`/api/mcp`) | ✅ Built; verified live against the PayPal sandbox |
 | Merchant console: approvals, cases, evidence (`/console`) | ✅ Built |
 | Verified, de-duplicated PayPal webhooks | ✅ Live on the hosted demo; forged deliveries are rejected |
-| Free model support (Gemini, Groq, local Ollama) next to Claude, with fallback | ✅ Built and tested; chat runs live on Gemini |
+| Multi-provider models (Gemini, Groq, local Ollama, Claude) with automatic fallback | ✅ Built and tested; chat runs live on Gemini |
 | Shipment tracking read from PayPal instead of our own table | 🚧 In progress |
-| Eval run (11 scenarios, k=3) | ✅ 33/33 passed on free Gemini, 0 wrong money moves |
+| Eval run (11 scenarios, k=3) | ✅ 33/33 passed on Gemini, 0 wrong money moves |
 | Push-to-talk voice | ⏳ Planned |
 | AG Studio insights dashboard | ⏳ Planned |
 | Hosted demo on Render (free plan) with Neon Postgres | ✅ Live; chat and MCP verified against the PayPal sandbox |
@@ -151,7 +151,7 @@ tool calls ([agent-toolkit #119](https://github.com/paypal/agent-toolkit/issues/
 | Category | Stack | Detail |
 |:---:|:---|:---|
 | **App** | Next.js 16 App Router, React 19, Tailwind 4 | One app: pages, API routes and server actions; one deploy |
-| **Agent** | Gemini (free tier) via an OpenAI-compatible loop, or Claude via `@anthropic-ai/sdk` | Up to 8 model calls per turn; `LLM_CHAIN` lists models tried in order, so a rate limit or timeout falls through to the next (Gemini, Groq or a local Ollama model); a refusal or the round limit hands off to a person |
+| **Agent** | Gemini via an OpenAI-compatible loop, or Claude via `@anthropic-ai/sdk` | Up to 8 model calls per turn; `LLM_CHAIN` lists models tried in order, so a rate limit or timeout falls through to the next (Gemini, Groq or a local Ollama model); a refusal or the round limit hands off to a person |
 | **Tools** | 4 narrow tools, zod-validated | `verify_customer`, `get_order_status`, `issue_refund`, `handoff_to_human`. Handlers never trust amounts or IDs from the model |
 | **Buyer agents** | `@modelcontextprotocol/sdk`, Streamable HTTP | Same tools with `caller = BUYER_AGENT`; sessions expire after 30 idle minutes |
 | **Policy** | Pure TypeScript functions | No I/O, table-tested; returns ALLOW / REQUIRE_APPROVAL / DENY with a reason |
@@ -169,7 +169,7 @@ tool calls ([agent-toolkit #119](https://github.com/paypal/agent-toolkit/issues/
 ```bash
 npm test                # 66 unit and integration tests, no network, no API key (Vitest)
 npm run typecheck       # Next.js route types + tsc
-npm run eval -- --k 3   # needs GEMINI_API_KEY (free tier) or an Anthropic key
+npm run eval -- --k 3   # needs GEMINI_API_KEY or an Anthropic key
 ```
 
 - **Unit tests** fake `fetch` at the PayPal client boundary and run on an in-memory database. They cover the policy
@@ -181,7 +181,7 @@ npm run eval -- --k 3   # needs GEMINI_API_KEY (free tier) or an Anthropic key
   injection or impersonation attempts, and a request for a person.
 - **Eval results** ([evals/reports/2026-11-11-13-26.md](evals/reports/2026-11-11-13-26.md), full transcripts inside):
   **33 of 33 trials passed** (11 scenarios × 3, pass^3 = 1.00), **0 trials with wrong money movement**, and all 9
-  injection, impersonation and wrong-email trials blocked. Agent: free-tier Gemini (`gemini-3.6-flash`, falling back to
+  injection, impersonation and wrong-email trials blocked. Agent: Gemini (`gemini-3.6-flash`, falling back to
   `gemini-3.5-flash-lite`); simulated customer: `gemini-3.5-flash-lite`; fake PayPal and in-memory database.
 
 ---
@@ -230,8 +230,8 @@ Requires Node.js 20.9 or newer and a [PayPal sandbox app](https://developer.payp
 | `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` | PayPal sandbox app credentials (required) |
 | `PAYPAL_WEBHOOK_ID` | Webhook ID from the same app; only needed with a public URL |
 | `LLM_CHAIN` | Models for the chat agent, tried in order, e.g. `gemini:gemini-3.6-flash,gemini:gemini-3.5-flash-lite,ollama:qwen3:8b` |
-| `GEMINI_API_KEY` | Free key from [Google AI Studio](https://aistudio.google.com) |
-| `GROQ_API_KEY` | Optional free fallback from [Groq](https://console.groq.com) |
+| `GEMINI_API_KEY` | API key from [Google AI Studio](https://aistudio.google.com) |
+| `GROQ_API_KEY` | Optional fallback provider: [Groq](https://console.groq.com) |
 | `EVAL_SIM_CHAIN` | Model that plays the customer in `npm run eval` (default `gemini:gemini-3.5-flash-lite`) |
 | `ANTHROPIC_API_KEY` / `AGENT_MODEL` | Use Claude instead: leave `LLM_CHAIN` empty. MCP and the console need no LLM at all |
 | `CONSOLE_PASSCODE` | Passcode for `/console`; any long random string |

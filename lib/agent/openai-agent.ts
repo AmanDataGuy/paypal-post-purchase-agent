@@ -15,7 +15,7 @@ import type { AgentEvent } from "./support-agent";
 
 const MAX_ROUNDS = 8; // model calls per customer turn
 const MAX_CUSTOMER_TURNS = 30; // per conversation
-const TIMEOUT_MS = 45_000; // a free-tier model sometimes hangs; move on to the next one
+const TIMEOUT_MS = 45_000; // a provider sometimes hangs; move on to the next model
 
 const PROVIDERS: Record<string, { url: string; key: () => string | undefined }> = {
   gemini: { url: "https://generativelanguage.googleapis.com/v1beta/openai", key: () => process.env.GEMINI_API_KEY },
@@ -42,7 +42,7 @@ export function parseChain(chain: string) {
 }
 
 // Ask the first model in the chain that answers. Rate limits and outages fall through to the next one; when every
-// model is rate limited, wait and go round again (free tiers reset per minute).
+// model is rate limited, wait and go round again (rate limits reset per minute).
 export const chat: ChatFn = async (messages, opts = {}) => {
   const chain = parseChain(opts.chain ?? process.env.LLM_CHAIN ?? "");
   if (!chain.length) throw new Error("LLM_CHAIN is empty");

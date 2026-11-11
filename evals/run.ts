@@ -2,7 +2,7 @@
  * # run.ts - runs the eval scenarios: a simulated customer vs the real support agent + gateway
  *
  * - `npm run eval -- --k 3 [--only B1,C1]`. With LLM_CHAIN set, the agent runs on that chain and the customer on
- *   EVAL_SIM_CHAIN (free tiers; trials run one at a time to stay under rate limits). Without it, both run on Claude,
+ *   EVAL_SIM_CHAIN (trials run one at a time to stay under provider rate limits). Without it, both run on Claude,
  *   which costs real API money (~$0.10 per conversation on Opus 5.5); ask first.
  * - Each trial gets a fresh in-memory world with a fake PayPal, so trials are independent and nothing real moves.
  * - Scored on the end state. Writes evals/reports/<date>.md with pass^1 and pass^k per scenario.
@@ -89,7 +89,7 @@ async function main() {
   let sumK = 0;
   let moneyViolations = 0;
   for (const s of picked) {
-    // Free tiers allow only a few requests a minute: run trials one at a time there.
+    // Provider rate limits are per minute: run trials one at a time there.
     const results = [];
     if (CHAIN) for (let i = 0; i < K; i++) results.push(await trial(s));
     else results.push(...(await Promise.all(Array.from({ length: K }, () => trial(s)))));
