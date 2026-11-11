@@ -1,8 +1,8 @@
 <div align="center">
 
-# PayPal Post-Purchase Agent
+# Before the Dispute
 
-**Fix the order before it becomes a PayPal dispute: one policy gate for the customer, their voice, and their AI agent**
+**An AI support agent for PayPal sellers. It answers the customer or their AI agent with real PayPal facts and refunds within the shop's rules. AI can propose a refund; only code can approve it.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -29,12 +29,11 @@ the seller pays a dispute fee whether they win or lose. This agent answers first
 and the shipping record, then does one of four things inside the shop's policy: explains where the parcel is, refunds,
 holds the refund for the owner, or refuses with a reason.
 
-Three kinds of caller reach the **same tools behind the same policy gate**:
+Two kinds of caller reach the **same tools behind the same policy gate**:
 
 | Caller | How they connect | What is different |
 |---|---|---|
 | **Customer, by chat** | `/support`: streamed answers with action cards and a live PayPal API trace | Standard auto-refund limit ($50) |
-| **Customer, by voice** | Push-to-talk on `/support` (planned, browser speech) | Same as chat |
 | **Customer's own AI agent** | MCP endpoint `/api/mcp`. No LLM of ours in this path: the agent calls our tools directly | **Stricter** auto-refund limit ($30); above it, the owner approves |
 
 When a PayPal case is opened anyway, the console builds the evidence (support transcript, refund proof, tracking)
@@ -72,7 +71,7 @@ flowchart LR
     classDef guard fill:#f5f5f4,stroke:#78716c,stroke-width:2px,color:#44403c
     classDef data fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0c4a6e
 
-    Cust[Customer<br>chat · voice]:::caller --> Turn[api/support/turn<br>SSE stream]:::edge
+    Cust[Customer<br>chat]:::caller --> Turn[api/support/turn<br>SSE stream]:::edge
     Buyer[Customer's AI agent]:::caller --> MCP[api/mcp<br>MCP Streamable HTTP]:::edge
     Turn --> Agent[lib/agent<br>support agent loop]:::core
     Agent --> GW[lib/gateway<br>validate · verify · audit]:::guard
