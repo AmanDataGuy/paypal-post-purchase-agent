@@ -5,7 +5,7 @@
  *   The script waits, captures each approved order, and writes customers / orders / shipments.
  * - Server-side card orders are not available on this sandbox account (spike S2), hence the buyer approval step.
  * - Idempotent: order numbers already in the DB are skipped. Shipping dates are simulated relative to today.
- * - Hosted DB: `DATABASE_URL=<external url> SEED_RUN=render npm run seed` (fresh PayPal orders for that DB).
+ * - Hosted DB: `DATABASE_URL=<hosted Postgres url> SEED_RUN=render npm run seed` (fresh PayPal orders for that DB).
  */
 import { eq } from "drizzle-orm";
 import { createDb } from "../lib/db/client";

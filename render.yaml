@@ -1,14 +1,16 @@
-# render.yaml - Render Blueprint: the Next.js web service plus its Postgres database
+# render.yaml - Render Blueprint: the Next.js web service on Render's free plan
 #
 # - Render > New > Blueprint > pick this repo. Secrets marked `sync: false` are asked for once in the Render dashboard
 #   and never live in git.
-# - Paid plans on purpose: the free web service sleeps after 15 idle minutes, and free Postgres is deleted after
-#   30 days; the demo must stay up for judging until Dec 21, 2026.
+# - Free on purpose (no card): the database is an external free Postgres (Neon), since Render's free Postgres is
+#   deleted after 30 days and the demo must stay up until Dec 21, 2026.
+# - shortcut: the free web service sleeps after 15 idle minutes, so the first visit after a pause takes about a
+#   minute; move to the Starter plan if judges need instant loads.
 services:
   - type: web
     name: paypal-post-purchase-agent
     runtime: node
-    plan: starter
+    plan: free
     region: oregon
     buildCommand: npm ci && npm run build
     startCommand: npm start
@@ -17,12 +19,10 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
-      - key: DATABASE_URL
-        fromDatabase:
-          name: paypal-agent-db
-          property: connectionString
       - key: LLM_CHAIN
         value: gemini:gemini-3.6-flash,gemini:gemini-3.5-flash-lite
+      - key: DATABASE_URL
+        sync: false
       - key: PAYPAL_CLIENT_ID
         sync: false
       - key: PAYPAL_CLIENT_SECRET
@@ -33,9 +33,3 @@ services:
         sync: false
       - key: PAYPAL_WEBHOOK_ID
         sync: false
-
-databases:
-  - name: paypal-agent-db
-    plan: basic-256mb
-    region: oregon
-    postgresMajorVersion: "16"
