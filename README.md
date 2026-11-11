@@ -135,7 +135,7 @@ tool calls ([agent-toolkit #119](https://github.com/paypal/agent-toolkit/issues/
 | Chat support agent with live API trace (`/support`) | ✅ Built; verified live against the PayPal sandbox |
 | MCP endpoint for buyer AI agents (`/api/mcp`) | ✅ Built; verified live against the PayPal sandbox |
 | Merchant console: approvals, cases, evidence (`/console`) | ✅ Built |
-| Verified, de-duplicated PayPal webhooks | ✅ Built; needs a public URL and `PAYPAL_WEBHOOK_ID` |
+| Verified, de-duplicated PayPal webhooks | ✅ Live on the hosted demo; forged deliveries are rejected |
 | Free model support (Gemini, Groq, local Ollama) next to Claude, with fallback | ✅ Built and tested; chat runs live on Gemini |
 | Shipment tracking read from PayPal instead of our own table | 🚧 In progress |
 | Eval run (11 scenarios, k=3) | ✅ 33/33 passed on free Gemini, 0 wrong money moves |
